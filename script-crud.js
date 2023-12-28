@@ -1,17 +1,18 @@
 // encontrar o botão adicionar tarefa
 const btnAdicionarTarefa = document.querySelector('.app__button--add-task')
 const btnCancelarTarefa = document.querySelector('.app__form-footer__button--cancel')
+const btnRemoverConcluidas = document.querySelector('#btn-remover-concluidas')
+const btnRemoverTodas = document.querySelector('#btn-remover-todas')
 const formAdiconarTarefa = document.querySelector('.app__form-add-task')
 const textarea = document.querySelector('.app__form-textarea')
 const ulTarefas = document.querySelector('.app__section-task-list')
 const paragrafoDescricaoTarefa = document.querySelector('.app__section-active-task-description')
 
-const tarefas = JSON.parse(localStorage.getItem('tarefas')) || []
+let tarefas = JSON.parse(localStorage.getItem('tarefas')) || []
 let tarefaSelecionada = null
 let liTarefaSelecionada = null
 
 function atualizarTarefas() {
-    debugger
     localStorage.setItem('tarefas', JSON.stringify(tarefas))
 }
 
@@ -51,8 +52,8 @@ function criarElementoTarefa(tarefa) {
     li.append(botao)
 
     if(tarefa.completa){
-        liTarefaSelecionada.classList.add('app__section-task-list-item-complete')
-        liTarefaSelecionada.querySelector('button').setAttribute('disabled', 'disabled')
+        li.classList.add('app__section-task-list-item-complete')
+        botao.setAttribute('disabled', 'disabled')
     } 
     else {
         li.onclick = () => {
@@ -115,3 +116,16 @@ document.addEventListener('FocoFinalizado', () => {
         atualizarTarefas()
     }
 })
+
+const removerTarefas = (somenteCompletas) => {
+    const seletor = somenteCompletas ? ".app__section-task-list-item-complete" : ".app__section-task-list-item"
+    document.querySelectorAll(seletor).forEach(elemento => {
+        elemento.remove()
+    })
+    //atualizar a lista de tarefas sem as tarefas concluídas
+    tarefas = somenteCompletas ? tarefas.filter(tarefa => !tarefa.completa) : []
+    atualizarTarefas()
+}
+
+btnRemoverConcluidas.onclick = () => removerTarefas(true)
+btnRemoverTodas.onclick = () => removerTarefas(false)
