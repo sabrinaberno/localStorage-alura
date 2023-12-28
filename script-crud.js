@@ -4,8 +4,10 @@ const btnCancelarTarefa = document.querySelector('.app__form-footer__button--can
 const formAdiconarTarefa = document.querySelector('.app__form-add-task')
 const textarea = document.querySelector('.app__form-textarea')
 const ulTarefas = document.querySelector('.app__section-task-list')
+const paragrafoDescricaoTarefa = document.querySelector('.app__section-active-task-description')
 
 const tarefas = JSON.parse(localStorage.getItem('tarefas')) || []
+let tarefaSelecionada = null
 
 function atualizarTarefas() {
     debugger
@@ -31,7 +33,7 @@ function criarElementoTarefa(tarefa) {
     botao.classList.add('app_button-edit')
     
     botao.onclick = () => {
-        const novaDescricao = prompt("Qual é o nome da tarefa?")
+        const novaDescricao = prompt("Escreva a nova descrição da tarefa")
         if(novaDescricao){
             paragrafo.textContent = novaDescricao
             tarefa.descricao = novaDescricao
@@ -47,6 +49,23 @@ function criarElementoTarefa(tarefa) {
     li.append(paragrafo)
     li.append(botao)
 
+    li.onclick = () => {
+        // remover classe de tarefas que não foram selecionadas
+        document.querySelectorAll('.app__section-task-list-item-active.app')
+            .forEach(elemento => {
+                elemento.classList.remove('app__section-task-list-item-active.app')
+            })
+            //remover tarefa selecionada de 'em andamento'
+        if(tarefaSelecionada == tarefa){
+            paragrafoDescricaoTarefa.textContent = ''
+            tarefaSelecionada = null
+            return
+        }
+        tarefaSelecionada = tarefa
+        paragrafoDescricaoTarefa.textContent = tarefa.descricao
+        
+        li.classList.add('.app__section-task-list-item-active.app')
+    }
     return li
 }
 
